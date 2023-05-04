@@ -26,6 +26,7 @@ body {
 
 .btnchat {
   cursor: pointer;
+
 }
 
 button {
@@ -109,7 +110,7 @@ input:focus {
 }
 
 .feed {
-  /* overflow: scroll; */
+  overflow: auto;
   width: 100%;
   padding: 0;
 }
