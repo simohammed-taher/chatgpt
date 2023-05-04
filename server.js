@@ -1,9 +1,8 @@
-
 import dotenv from 'dotenv';
 import express from 'express';
 import cors from 'cors';
 import fetch from 'node-fetch';
-import writeFile from 'fs';
+import fs from 'fs';
 
 dotenv.config();
 const PORT = 8000;
@@ -12,7 +11,6 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 const API_KEY = process.env.API_KEY;
-
 
 app.post('/completions', async (req, res) => {
     const options = {
@@ -31,6 +29,14 @@ app.post('/completions', async (req, res) => {
     try {
         const response = await fetch('https://api.openai.com/v1/chat/completions', options);
         const data = await response.json();
+
+        fs.writeFile("./log.txt", `${req.body.message} => ${data.choices[0].message.content}\n------------------------------------------\n`, { encoding: "utf8", flag: "a" }, (error) => {
+            if (error) {
+                console.log(error);
+                return;
+            }
+            console.log("File created...");
+        });
         res.json(data);
     } catch (error) {
         console.error(error.message);

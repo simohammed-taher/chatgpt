@@ -67,11 +67,11 @@ function App() {
           ))}
         </ul>
         <nav>
-          <p>Made by Taher</p>
+          <p>Made by XMehdi01</p>
         </nav>
       </section>
       <section className="main">
-        {!currentChatTitle && <h1>OFPPT-GPT-4</h1>}
+        {!currentChatTitle && <h1>Prodware-GPT</h1>}
         <ul className="feed">
           {currentChat?.map((chatMessage, index) => (
             <li key={index}>
