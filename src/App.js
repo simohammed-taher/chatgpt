@@ -1,104 +1,96 @@
 import { useEffect, useState } from "react";
 
 function App() {
-  const [value, setValue] = useState(null);
-  const [message, setMessage] = useState(null);
-  const [previousChats, setPreviousChats] = useState([]);
-  const [currentTitle, setCurrentTitle] = useState(null);
+  const [userInput, setUserInput] = useState(null);
+  const [generatedMessage, setGeneratedMessage] = useState(null);
+  const [chatHistory, setChatHistory] = useState([]);
+  const [currentChatTitle, setCurrentChatTitle] = useState(null);
 
-  const creatNewChat = () => {
-    setMessage(null);
-    setValue("");
-    setCurrentTitle(null);
+  // Create a new chat
+  const createNewChat = () => {
+    setGeneratedMessage(null);
+    setUserInput("");
+    setCurrentChatTitle(null);
   };
 
-  const handleClick = (uniqueTitle) => {
-    setCurrentTitle(uniqueTitle);
-    setMessage(null);
-    setValue("");
+  // Handle clicking on a chat title in the history
+  const handleChatTitleClick = (uniqueTitle) => {
+    setCurrentChatTitle(uniqueTitle);
+    setGeneratedMessage(null);
+    setUserInput("");
   };
 
-  const getMessages = async () => {
-    const options = {
+  // Fetch messages from the API
+  const fetchMessages = async () => {
+    const requestOptions = {
       method: "POST",
-      body: JSON.stringify({
-        message: value,
-      }),
-      headers: {
-        "Content-Type": "application/json",
-      },
+      body: JSON.stringify({ message: userInput }),
+      headers: { "Content-Type": "application/json" },
     };
+
     try {
-      const response = await fetch("http://localhost:8000/completions", options);
+      const response = await fetch("http://localhost:8000/completions", requestOptions);
       const data = await response.json();
-      setMessage(data.choices[0].message);
+      setGeneratedMessage(data.choices[0].message);
     } catch (error) {
       console.error(error);
     }
   };
 
-
+  // Update chat history when a new message is generated
   useEffect(() => {
-    console.log(currentTitle, value, message);
-    if (!currentTitle && value && message) {
-      setCurrentTitle(value);
+    if (!currentChatTitle && userInput && generatedMessage) {
+      setCurrentChatTitle(userInput);
     }
-    if (currentTitle && value && message) {
-      setPreviousChats(prevChats => (
-        [...previousChats,
-        {
-          title: currentTitle,
-          role: "user",
-          content: value,
-        },
-        {
-          title: currentTitle,
-          role: message.role,
-          content: message.content,
-        },
-        ]
-      ))
+
+    if (currentChatTitle && userInput && generatedMessage) {
+      setChatHistory((prevChats) => [
+        ...prevChats,
+        { title: currentChatTitle, role: "user", content: userInput },
+        { title: currentChatTitle, role: generatedMessage.role, content: generatedMessage.content },
+      ]);
     }
-  }, [message, currentTitle]);
+  }, [generatedMessage, currentChatTitle]);
 
-  const currentChat = previousChats.filter(previousChats => previousChats.title === currentTitle);
-  const uniqueTitles = Array.from(new Set(previousChats.map((previousChats) => previousChats.title)));
+  const currentChat = chatHistory.filter((chat) => chat.title === currentChatTitle);
+  const uniqueChatTitles = Array.from(new Set(chatHistory.map((chat) => chat.title)));
 
-  console.log(uniqueTitles);
   return (
     <div className="app">
       <section className="side-bar">
-        <button onClick={creatNewChat}>+ New chat</button>
+        <button onClick={createNewChat}>+ New chat</button>
         <ul className="history">
-          {uniqueTitles?.map((uniqueTitle, index) =>
-            <li key={index} onClick={() => handleClick(uniqueTitle)}>
-              {uniqueTitle}
+          {uniqueChatTitles?.map((title, index) => (
+            <li key={index} onClick={() => handleChatTitleClick(title)}>
+              {title}
             </li>
-          )}
+          ))}
         </ul>
         <nav>
           <p>Made by Taher</p>
         </nav>
       </section>
       <section className="main">
-        {!currentTitle && <h1>OFPPT-GPT-4</h1>}
+        {!currentChatTitle && <h1>OFPPT-GPT-4</h1>}
         <ul className="feed">
-          {currentChat?.map((chatMessage, index) =>
+          {currentChat?.map((chatMessage, index) => (
             <li key={index}>
               <p className="role">{chatMessage.role}</p>
               <p>{chatMessage.content}</p>
             </li>
-          )}
+          ))}
         </ul>
         <div className="bottom-section">
           <div className="input-container">
-            <input value={value} placeholder="Send a message" onChange={(e) => setValue(e.target.value)}
+            <input
+              value={userInput}
+              placeholder="Send a message"
+              onChange={(e) => setUserInput(e.target.value)}
               onKeyDown={(e) => {
-                e.keyCode === 13 && e.shiftKey === false && getMessages();
+                e.keyCode === 13 && e.shiftKey === false && fetchMessages();
               }}
             />
-            <div id="submit" onClick={getMessages} className="subb">
-              {/* ➢ */}
+            <div id="submit" onClick={fetchMessages} className="subb">
               <img
                 src="./send.png"
                 width={15}
@@ -117,5 +109,3 @@ function App() {
 }
 
 export default App;
-
-

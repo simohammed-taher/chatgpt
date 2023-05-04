@@ -22,19 +22,25 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
 }
 
 .btnchat {
   cursor: pointer;
-
 }
 
 button {
-  border: solid 0.5px rgba(255, 255, 255, 0.5);
-  background-color: transparent;
+  border: solid 1px rgba(255, 255, 255, 0.5);
+  background-color: #424242;
   border-radius: 5px;
   padding: 10px;
   margin: 10px;
+  font-weight: 600;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #616161;
 }
 
 nav {
@@ -53,6 +59,12 @@ nav {
   list-style-type: none;
   padding: 15px 0;
   cursor: pointer;
+  font-weight: 600;
+  transition: color 0.3s;
+}
+
+.history li:hover {
+  color: #b3b3b3;
 }
 
 .main {
@@ -107,6 +119,11 @@ input:focus {
   bottom: 15px;
   right: 0;
   cursor: pointer;
+  transition: transform 0.3s;
+}
+
+#submit:hover {
+  transform: scale(1.1);
 }
 
 .feed {
@@ -121,8 +138,9 @@ input:focus {
   width: 100%;
   padding: 20px;
   margin: 20px 0;
+  border-radius: 5px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0 2px 4px;
 }
-
 
 .feed p {
   color: rgba(255, 255, 255, 0.8);
@@ -132,6 +150,7 @@ input:focus {
 
 .feed p.role {
   min-width: 100px;
+  font-weight: 600;
 }
 
 .subb {
